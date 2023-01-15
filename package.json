@@ -1,0 +1,20 @@
+{
+  "name": "07-node-restserver",
+  "version": "1.0.0",
+  "description": "07-node-restserver",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/node_curso/07-node-restserver.git"
+  },
+  "author": "ANGERSON JOSE AMUNDARAY RENGIFO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/node_curso/07-node-restserver/issues"
+  },
+  "homepage": "https://gitlab.com/node_curso/07-node-restserver#readme"
+}

@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  node-rest-server:
+    image: node-rest-server:1.0.0
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: node-rest-server
+    ports:
+      - "3000:3000"
