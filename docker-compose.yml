@@ -13,6 +13,7 @@ services:
       - MONGO_DOMAIN=${MONGO_DOMAIN}
       - MONGO_DATABASE=${MONGO_DATABASE}
       - MONGO_PORT=${MONGO_PORT}
+    env_file: .env
     ports:
       - "${PORT}:${PORT}"
     depends_on:
@@ -28,6 +29,6 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     volumes:
       - mongodb:/data/db
-      - ./database/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./database/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
 volumes:
   mongodb: {}
