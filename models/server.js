@@ -11,10 +11,16 @@ class Server {
     this.port = process.env.PORT || 3000;
 
     //Routes declarations
+    this.authRoute = {
+      path: '/auth/v1/auth',
+      route: require('../routes/auth.route')
+    };
+
     this.usersRoute = {
-      path: '/users/v0/users',
+      path: '/users/v1/users',
       route: require('../routes/users.route')
     };
+
 
     //Database Connection
     this.databaseConnect();
@@ -39,6 +45,7 @@ class Server {
   }
 
   routes() {
+    this.app.use(this.authRoute.path ,this.authRoute.route);
     this.app.use(this.usersRoute.path ,this.usersRoute.route);
   }
 
