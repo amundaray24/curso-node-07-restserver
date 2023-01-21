@@ -15,7 +15,15 @@ const validateEmployeeByEmail = async (email = '' ) => {
   } 
 }
 
+const validateEmployeeById = async (_id = '' ) => {
+  const exist = await Employee.countDocuments({_id,status:true});
+  if (exist===0) {
+    throw new Error(`ERROR - Employee doesn't exist: ${_id}`);
+  } 
+}
+
 module.exports = {
   itsValidRole,
-  validateEmployeeByEmail
+  validateEmployeeByEmail,
+  validateEmployeeById
 }

@@ -25,7 +25,7 @@ class Server {
     this.routes();
   }
 
-  databaseConnect = () => {
+  databaseConnect () {
     createConnection();
   }
 

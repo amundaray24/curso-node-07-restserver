@@ -5,10 +5,6 @@ const employeeSchema = new Schema({
     type: String,
     required: [true, 'The firstName must be informed']
   },
-  firstName : {
-    type: String,
-    required: [true, 'The firstName must be informed']
-  },
   secondName : {
     type: String
   },

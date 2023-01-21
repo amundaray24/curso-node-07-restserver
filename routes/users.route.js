@@ -4,7 +4,8 @@ const {check} = require('express-validator');
 const validateFields = require('../middleware/fields.validator.middleware');
 const {
   itsValidRole,
-  validateEmployeeByEmail
+  validateEmployeeByEmail,
+  validateEmployeeById
 } = require('../helpers/database.validator.helper');
 
 const {
@@ -17,9 +18,10 @@ const {
 
 
 const router = Router();
+
 router.get('/', listUsers);
 
-router.post('/', 
+router.post('/',[
   check('firstName','Invalid firstName, must be send and have at least 3 chars').notEmpty().isLength({min:3}),
   check('secondName','Invalid secondName, must be have at least 3 chars').optional().isLength({min:3}),
   check('lastName','Invalid lastName, must be send and have at least 3 chars').notEmpty().isLength({min:3}),
@@ -29,13 +31,36 @@ router.post('/',
   check('email').custom(validateEmployeeByEmail),
   // check('role','Invalid role').isIn(['ADMIN_ROLE','USER_ROLE']),
   check('role').custom(itsValidRole),
-  validateFields,
+  validateFields
+],
 createUser);
 
-router.get('/:userId', getUser);
+router.get('/:userId',[
+  check('userId','Invalid userId').isMongoId(),
+  check('userId', 'User doesn\'t exist').custom(validateEmployeeById),
+  validateFields
+],
+getUser);
 
-router.patch('/:userId', updateUser);
+router.patch('/:userId',[ 
+  check('userId','Invalid userId').isMongoId(),
+  check('userId', 'User doesn\'t exist').custom(validateEmployeeById),
+  check('firstName','Invalid firstName, must be send and have at least 3 chars').optional().isLength({min:3}),
+  check('secondName','Invalid secondName, must be have at least 3 chars').optional().isLength({min:3}),
+  check('lastName','Invalid lastName, must be send and have at least 3 chars').optional().isLength({min:3}),
+  check('secondLastName','Invalid secondLastName, must be have at least 3 chars').optional().isLength({min:3}),
+  check('email','Invalid Email').optional().isEmail(),
+  check('email').optional().custom(validateEmployeeByEmail),
+  check('role').optional().custom(itsValidRole),
+  validateFields
+],
+updateUser);
 
-router.delete('/:userId', deleteUser);
+router.delete('/:userId',[
+  check('userId','Invalid userId').isMongoId(),
+  check('userId', 'User doesn\'t exist').custom(validateEmployeeById),
+  validateFields
+],
+deleteUser);
 
 module.exports = router;
