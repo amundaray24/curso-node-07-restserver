@@ -8,6 +8,4 @@ RUN npm install
 
 COPY . .
 
-RUN echo "PORT=3000" > .env
-
 CMD [ "npm", "start"]
