@@ -3,6 +3,7 @@ const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
 const { generateJwt } = require('../helpers/jwt.generator.helper');
+const { generateResponseError } = require('../helpers/errors.generator.helper');
 
 const doLogin = async (req,res = response) => {
   const {email, password} = req.body;
@@ -14,35 +15,28 @@ const doLogin = async (req,res = response) => {
     let passwordValid = false;
     if (user) passwordValid = bcryptjs.compareSync(password,user.password);
 
-    if (!user || !passwordValid){
-      return res.status(400).json({
-        type: 'FATAL',
-        messages: [
-          {
-            message: 'Email or Password invalid'
-          }
-        ]
-      });
-    }
+    if (!user || !passwordValid) return generateResponseError(res,400,'Email or Password invalid');
+    
 
     const jwt = await generateJwt(user._id);
     
-    res.header('tsec',jwt);
+    res.header('Authorization',jwt);
 
     res.json({
-      msg: 'login OK'
+      authentication: {
+        state: 'OK'
+      },
+      user: {
+        firstName : user.firstName,
+        secondName : user.secondName,
+        lastName: user.lastName,
+        secondLastName: user.secondLastName
+      }
     });
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'Error on login process, Please try again later'
-        }
-      ]
-    });
+    generateResponseError(res,500,'Error on login process, Please try again later');
   }
 }
 

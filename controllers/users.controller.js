@@ -2,43 +2,36 @@ const {response} = require('express');
 const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
+const { generateResponseError } = require('../helpers/errors.generator.helper');
+const { paginationGenerator } = require('../helpers/pagination.generator.helper');
 
 
 const listUsers = (req, res = response) => {
   
-  const {pageKey = 0, pageSize = 10 } = req.query;
-  const pageKeyNumber = Number(pageKey);
+  const {page = 0, pageSize = 10 } = req.query;
+  const pageNumber = Number(page);
   const pageSizeNumber = Number(pageSize);
 
   Promise.all([
     User.countDocuments({status : true}),
     User.find({status : true})
-      .skip(pageKeyNumber === 0 ? 0 : pageKeyNumber-1)
+      .skip(pageNumber === 0 ? 0 : (pageNumber-1)*pageSizeNumber)
       .limit(pageSizeNumber)    
   ])
   .then((response) => {
-    const totalElements = response[0];
     const data = response[1];
-    if (totalElements>0) {
+    if (data.length>0) {
+      const pagination = paginationGenerator(pageNumber,pageSizeNumber,data.length,response[0]);
       return res.json({
         data,
-        pagination: {
-          totalElements
-        }
+        pagination
       });
     }
     res.sendStatus(204);
   })
   .catch((error) => {
     console.log('Users cant be listed',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'Users cant be listed'
-        }
-      ]
-    });
+    generateResponseError(res,400,'Users cant be listed');
   });
 }
 
@@ -58,14 +51,7 @@ const createUser = (req, res = response) => {
     })
     .catch((error) => {
       console.log('User cant be created',error);
-      res.status(400).json({
-        type: 'FATAL',
-        messages: [
-          {
-            message: 'User cant be created'
-          }
-        ]
-      });
+      generateResponseError(res,400,'User cant be created');
     });
 }
 
@@ -82,14 +68,7 @@ const getUser = (req, res = response) => {
   })
   .catch((error) => {
     console.log('User cant be find',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'User cant be find'
-        }
-      ]
-    });
+    generateResponseError(res,400,'User cant be find');
   });
 }
 
@@ -106,14 +85,7 @@ const updateUser = (req, res = response) => {
   })
   .catch((error) => {
     console.log('User cant be updated',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'User cant be updated'
-        }
-      ]
-    });
+    generateResponseError(res,400,'User cant be updated');
   });
 }
 
@@ -128,14 +100,7 @@ const deleteUser = (req, res = response) => {
   })
   .catch((error) => {
     console.log('User cant be deleted',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'User cant be deleted'
-        }
-      ]
-    });
+    generateResponseError(res,400,'User cant be deleted');
   });
 }
 
