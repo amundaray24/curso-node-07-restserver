@@ -1,9 +1,42 @@
-# Rest Server
-# 07-node-restserver
-- author: ANGERSON JOSE AMUNDARAY RENGIFO
-- type: NodeJs
+<h1 style="color:#075982;font-weight:bold"> Nodejs Rest Server </h1>
 
-<h2>1. Deploy Configurations:</h2>
+```
+- Author: ANGERSON JOSE AMUNDARAY RENGIFO
+- Type: NodeJs
+```
+#
+
+<h2 style="color:#075982;font-weight:bold">1. Sign in with Google configuration</h2>
+<p>
+The "consent screen" must be configured and the client_id and client_secret must be generated in the google console, in addition, the domains from which authentication with google will be allowed must also be configured.
+
+https://developers.google.com/identity/gsi/web/guides/overview<br><br>
+</p>
+
+
+<h2 style="color:#075982;font-weight:bold">2. Init mongodb scripts (Local cases or initial load)</h2>
+<p>
+Can exec scripts on the first startup of mongodb . For this must create the file:<br><br>
+<b>./database/scripts/mongo-init.js</b><br><br>
+File content example:<br>
+</p>
+
+```
+db.createUser(
+  {
+      user: "user",
+      pwd: "password",
+      roles: [ { role: "readWrite", db: "users_db" } ]
+  }
+)
+
+db.createCollection("user_collection")
+db.coffee_users.insert({greeting: 'hello-world'})
+
+```
+
+<h2 style="color:#075982;font-weight:bold">3. Deploy Configurations:</h2>
+<h3 style="color:#b56402;font-weight:bold">(must exist google configuration, step #1)<h3>
 must create .env file to deploy or local test - Structure:</p>
 
 ```
@@ -25,6 +58,10 @@ JWT_SECRET=<JWT SECRET TO GENERATE SIGNATURE>
 MONGO_ROOT_USER=<MONGO ROOT USER>
 MONGO_ROOT_PASSWORD=<MONGO ROOT PASSWORD>
 
+#GOOGLE AUTH
+GOOGLE_AUTH_CLIENT_ID=<GOOGLE AUTH SERVICE OAUTH CLIENT ID>
+GOOGLE_AUTH_CLIENT_SECRET=<GOOGLE AUTH SERVICE OAUTH CLIENT SECRET>
+
  ------ .env file example: ------
 
 #SERVER CONFIGURATION
@@ -40,40 +77,25 @@ MONGO_PORT=27017
 #AUTH SECRET
 JWT_SECRET=123456abcdef
 
+#GOOGLE AUTH
+GOOGLE_AUTH_CLIENT_ID=123client_id
+GOOGLE_AUTH_CLIENT_SECRET=456client_secret
+
 #MONGO SERVER TO LOCAL DEPLOY ON DOCKER-COMPOSE
 MONGO_ROOT_USER=superuser
 MONGO_ROOT_PASSWORD=super_password
 
 ```
-<h2>2. Init mongodb scripts</h2>
-<p>
-Can exec scripts on the first startup of mongodb . For this must create the file:<br><br>
-<b>./database/scripts/mongo-init.js</b><br><br>
-File content example:<br>
-</p>
 
-```
-db.createUser(
-  {
-      user: "user",
-      pwd: "password",
-      roles: [ { role: "readWrite", db: "users_db" } ]
-  }
-)
-
-db.createCollection("user_collection")
-db.coffee_users.insert({greeting: 'hello-world'})
-
-```
-
-<h2>3. Init application</h2>
+<h2 style="color:#075982;font-weight:bold">4. Init application</h2>
+<h3 style="color:#b56402;font-weight:bold">(must exist .env file, step #3)<h3>
 <p>Init local command:</p>
 
 ```
 npm run dev
 ```
 
-<p>Deploy on docker (must exist .env file, step #1):</p>
+<p>Deploy on docker:</p>
 
 ```
 docker-compose up -d
