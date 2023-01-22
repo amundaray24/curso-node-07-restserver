@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose');
 
-const employeeSchema = new Schema({
+const userSchema = new Schema({
   firstName : {
     type: String,
     required: [true, 'The firstName must be informed']
@@ -42,9 +42,9 @@ const employeeSchema = new Schema({
   }
 });
 
-employeeSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function() {
   const { _id ,__v, password, ...rest} = this.toObject();
   return Object.assign({id: _id}, rest);
 }
 
-module.exports = model('coffee_employee',employeeSchema);
+module.exports = model('coffee_user',userSchema);

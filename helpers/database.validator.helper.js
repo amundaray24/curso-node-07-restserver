@@ -1,29 +1,29 @@
 const Role = require('../models/role');
-const Employee = require('../models/employee');
+const User = require('../models/user');
 
 const itsValidRole = async (role = '') => {
   const existRole = await Role.findOne({role});
   if (!existRole) {
-    throw new Error(`ERROR - Invalid role: ${role}`);
+    throw new Error(`role - Invalid Mandatory Parameter, Invalid value: ${role}`);
   }
 }
 
-const validateEmployeeByEmail = async (email = '' ) => {
-  const exist = await Employee.findOne({email});
+const validateUserByEmail = async (email = '' ) => {
+  const exist = await User.findOne({email});
   if (exist) {
-    throw new Error(`ERROR - Employee email already exist: ${email}`);
+    throw new Error(`email - Invalid Mandatory Parameter, User email already exist: ${email}`);
   } 
 }
 
-const validateEmployeeById = async (_id = '' ) => {
-  const exist = await Employee.countDocuments({_id,status:true});
+const validateUserById = async (_id = '' ) => {
+  const exist = await User.countDocuments({_id,status:true});
   if (exist===0) {
-    throw new Error(`ERROR - Employee doesn't exist: ${_id}`);
+    throw new Error(`user-id - Invalid Mandatory Parameter, User doesn't exist: ${_id}`);
   } 
 }
 
 module.exports = {
   itsValidRole,
-  validateEmployeeByEmail,
-  validateEmployeeById
+  validateUserByEmail,
+  validateUserById
 }

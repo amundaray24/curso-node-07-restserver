@@ -1,50 +1,43 @@
 const {response} = require('express');
 const bcryptjs = require('bcryptjs');
 
-const Employee = require('../models/employee');
+const User = require('../models/user');
+const { generateResponseError } = require('../helpers/errors.generator.helper');
+const { paginationGenerator } = require('../helpers/pagination.generator.helper');
 
 
 const listUsers = (req, res = response) => {
   
-  const {pageKey = 0, pageSize = 10 } = req.query;
-  const pageKeyNumber = Number(pageKey);
+  const {page = 0, pageSize = 10 } = req.query;
+  const pageNumber = Number(page);
   const pageSizeNumber = Number(pageSize);
 
   Promise.all([
-    Employee.countDocuments({status : true}),
-    Employee.find({status : true})
-      .skip(pageKeyNumber === 0 ? 0 : pageKeyNumber-1)
+    User.countDocuments({status : true}),
+    User.find({status : true})
+      .skip(pageNumber === 0 ? 0 : (pageNumber-1)*pageSizeNumber)
       .limit(pageSizeNumber)    
   ])
   .then((response) => {
-    const totalElements = response[0];
     const data = response[1];
-    if (totalElements>0) {
+    if (data.length>0) {
+      const pagination = paginationGenerator(pageNumber,pageSizeNumber,data.length,response[0]);
       return res.json({
         data,
-        pagination: {
-          totalElements
-        }
+        pagination
       });
     }
     res.sendStatus(204);
   })
   .catch((error) => {
-    console.log('Employees cant be listed',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'Employees cant be listed'
-        }
-      ]
-    });
+    console.log('Users cant be listed',error);
+    generateResponseError(res,400,'Users cant be listed');
   });
 }
 
 const createUser = (req, res = response) => {
   const {hasGoogle,status, image, ...rest } = req.body;
-  const user = new Employee(rest);
+  const user = new User(rest);
 
   // encrypt
   const salt = bcryptjs.genSaltSync();
@@ -53,19 +46,12 @@ const createUser = (req, res = response) => {
 
   user.save()
     .then((data) => {
-      console.log(`Employee Created ${data}`);
+      console.log(`User Created ${data._id}`);
       res.json({data});
     })
     .catch((error) => {
-      console.log('Employee cant be created',error);
-      res.status(400).json({
-        type: 'FATAL',
-        messages: [
-          {
-            message: 'Employee cant be created'
-          }
-        ]
-      });
+      console.log('User cant be created',error);
+      generateResponseError(res,400,'User cant be created');
     });
 }
 
@@ -73,7 +59,7 @@ const getUser = (req, res = response) => {
 
   const { userId } = req.params;
 
-  Employee.findOne({
+  User.findOne({
     _id: userId,
     status : true
   })
@@ -81,15 +67,8 @@ const getUser = (req, res = response) => {
     res.json({data});
   })
   .catch((error) => {
-    console.log('Employee cant be find',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'Employee cant be find'
-        }
-      ]
-    });
+    console.log('User cant be find',error);
+    generateResponseError(res,400,'User cant be find');
   });
 }
 
@@ -99,21 +78,14 @@ const updateUser = (req, res = response) => {
   const {_id, hasGoogle,status, image, password, ...rest } = req.body;
   //TODO cambio de contraseña (cifrado)
 
-  Employee.findByIdAndUpdate(userId,rest)
+  User.findByIdAndUpdate(userId,rest)
   .then( () => {
-    console.log(`Employee updated ${userId}`);
+    console.log(`User updated ${userId}`);
     res.sendStatus(204);
   })
   .catch((error) => {
-    console.log('Employee cant be updated',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'Employee cant be updated'
-        }
-      ]
-    });
+    console.log('User cant be updated',error);
+    generateResponseError(res,400,'User cant be updated');
   });
 }
 
@@ -121,21 +93,14 @@ const deleteUser = (req, res = response) => {
 
   const { userId } = req.params;
 
-  Employee.findByIdAndUpdate(userId,{status: false})
+  User.findByIdAndUpdate(userId,{status: false})
   .then( () => {
-    console.log(`Employee deleted ${userId}`);
+    console.log(`User deleted ${userId}`);
     res.sendStatus(204);
   })
   .catch((error) => {
-    console.log('Employee cant be deleted',error);
-    res.status(400).json({
-      type: 'FATAL',
-      messages: [
-        {
-          message: 'Employee cant be deleted'
-        }
-      ]
-    });
+    console.log('User cant be deleted',error);
+    generateResponseError(res,400,'User cant be deleted');
   });
 }
 
