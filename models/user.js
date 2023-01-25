@@ -47,4 +47,4 @@ userSchema.methods.toJSON = function() {
   return Object.assign({id: _id}, rest);
 }
 
-module.exports = model('coffee_user',userSchema);
+module.exports = model('coffee_users',userSchema,'coffee_users');

@@ -11,15 +11,20 @@ class Server {
     this.port = process.env.PORT || 3000;
 
     //Routes declarations
-    this.authRoute = {
-      path: '/auth/v1/auth',
-      route: require('../routes/auth.route')
-    };
-
-    this.usersRoute = {
-      path: '/users/v1/users',
-      route: require('../routes/users.route')
-    };
+    this.paths = [
+      {
+        path: '/auth/v1/auth',
+        route: '../routes/auth.route'
+      },
+      {
+        path: '/users/v1/users',
+        route: '../routes/users.route'
+      },
+      {
+        path: '/categories/v1/categories',
+        route: '../routes/categories.route'
+      }
+    ]
 
 
     //Database Connection
@@ -45,8 +50,9 @@ class Server {
   }
 
   routes() {
-    this.app.use(this.authRoute.path ,this.authRoute.route);
-    this.app.use(this.usersRoute.path ,this.usersRoute.route);
+    this.paths.forEach((routeItem) => {
+      this.app.use(routeItem.path ,require(routeItem.route));
+    });
   }
 
   start() {

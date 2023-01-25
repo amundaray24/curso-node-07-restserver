@@ -11,4 +11,4 @@ const roleSchema = new Schema({
   }
 });
 
-module.exports = model('coffee_role',roleSchema);
+module.exports = model('coffee_roles',roleSchema,'coffee_roles');

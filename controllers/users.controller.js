@@ -47,7 +47,8 @@ const createUser = (req, res = response) => {
   user.save()
     .then((data) => {
       console.log(`User Created ${data._id}`);
-      res.json({data});
+      res.header('Location',`${req.originalUrl}/${data._id}`);
+      res.status(201).json({data});
     })
     .catch((error) => {
       console.log('User cant be created',error);
@@ -76,7 +77,6 @@ const updateUser = (req, res = response) => {
 
   const { userId } = req.params;
   const {_id, hasGoogle,status, image, password, ...rest } = req.body;
-  //TODO cambio de contraseña (cifrado)
 
   User.findByIdAndUpdate(userId,rest)
   .then( () => {
