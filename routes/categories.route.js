@@ -5,7 +5,7 @@ const { validateJwt, roleValidator, validateFields } = require('../middleware');
 
 const { 
   validateCategoryById,
-  validateCategoryByIdName
+  validateCategoryByName
  } = require('../helpers/database.validator.helper');
 
 const { 
@@ -27,7 +27,7 @@ router.post('/', [
   validateJwt,
   roleValidator('ADMIN_ROLE'),
   check('name').notEmpty().isLength({min:3}),
-  check('name').custom(validateCategoryByIdName),
+  check('name').custom(validateCategoryByName),
   check('description').notEmpty().isLength({min:3}),
   validateFields
 ],
@@ -47,7 +47,7 @@ router.patch('/:categoryId', [
   check('categoryId','category-id - Invalid Mandatory Parameter').isMongoId(),
   check('categoryId').custom(validateCategoryById),
   check('name').optional().isLength({min:3}),
-  check('name').custom(validateCategoryByIdName),
+  check('name').custom(validateCategoryByName),
   check('description').optional().isLength({min:3}),
   validateFields
 ],

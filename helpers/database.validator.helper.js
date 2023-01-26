@@ -1,6 +1,7 @@
 const Role = require('../models/role');
 const User = require('../models/user');
 const Category = require('../models/category');
+const Product = require('../models/product');
 
 const itsValidRole = async (role = '') => {
   const existRole = await Role.findOne({role});
@@ -23,7 +24,6 @@ const validateUserById = async (_id = '' ) => {
   } 
 }
 
-//
 const validateCategoryById = async (_id = '') => {
   const exist = await Category.countDocuments({_id,status:true});
   if (exist===0){
@@ -31,10 +31,24 @@ const validateCategoryById = async (_id = '') => {
   }
 }
 
-const validateCategoryByIdName = async (name = '') => {
+const validateCategoryByName = async (name = '') => {
   const exist = await Category.findOne({name : name.toUpperCase()});
   if (exist){
     throw new Error(`category-id - Invalid Mandatory Parameter, Category name already exist: ${name}`);
+  }
+}
+
+const validateProductById = async (_id = '') => {
+  const exist = await Product.countDocuments({_id,status:true});
+  if (exist===0){
+    throw new Error(`product-id - Invalid Mandatory Parameter, Product doesn't exist: ${_id}`);
+  }
+}
+
+const validateProductByName = async (name = '') => {
+  const exist = await Product.findOne({name : name.toUpperCase()});
+  if (exist){
+    throw new Error(`product-id - Invalid Mandatory Parameter, Product name already exist: ${name}`);
   }
 }
 
@@ -44,5 +58,7 @@ module.exports = {
   validateUserByEmail,
   validateUserById,
   validateCategoryById,
-  validateCategoryByIdName
+  validateCategoryByName,
+  validateProductById,
+  validateProductByName
 }

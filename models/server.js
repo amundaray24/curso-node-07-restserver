@@ -23,6 +23,10 @@ class Server {
       {
         path: '/categories/v1/categories',
         route: '../routes/categories.route'
+      },
+      {
+        path: '/products/v1/products',
+        route: '../routes/products.route'
       }
     ]
 

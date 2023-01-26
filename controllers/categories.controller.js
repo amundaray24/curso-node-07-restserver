@@ -41,7 +41,7 @@ const createCategory = async (req = request, res = response) => {
   const category = new Category({
     name : name.toUpperCase(),
     description: description.toUpperCase(),
-    userId: Types.ObjectId(req.context.user.id)
+    user: Types.ObjectId(req.context.user.id)
   });
   category.save()
     .then((data) => {
