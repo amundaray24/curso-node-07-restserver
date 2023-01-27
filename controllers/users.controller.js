@@ -3,25 +3,24 @@ const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
 const { generateResponseError } = require('../helpers/errors.generator.helper');
-const { paginationGenerator } = require('../helpers/pagination.generator.helper');
+const { requestPaginatorGenerator, responsePaginationGenerator } = require('../helpers/pagination.generator.helper');
 
 
 const listUsers = (req, res = response) => {
   
-  const {page = 0, pageSize = 10 } = req.query;
-  const pageNumber = Number(page);
-  const pageSizeNumber = Number(pageSize);
+  const {page, pageSize} = req.query;
+  const requestPagination = requestPaginatorGenerator(page,pageSize);
 
   Promise.all([
     User.countDocuments({status : true}),
     User.find({status : true})
-      .skip(pageNumber === 0 ? 0 : (pageNumber-1)*pageSizeNumber)
-      .limit(pageSizeNumber)    
+      .skip(requestPagination.skip)
+      .limit(requestPagination.limit)
   ])
   .then((response) => {
     const data = response[1];
     if (data.length>0) {
-      const pagination = paginationGenerator(pageNumber,pageSizeNumber,data.length,response[0]);
+      const pagination = responsePaginationGenerator(requestPagination,data.length,response[0]);
       return res.json({
         data,
         pagination
@@ -47,7 +46,8 @@ const createUser = (req, res = response) => {
   user.save()
     .then((data) => {
       console.log(`User Created ${data._id}`);
-      res.json({data});
+      res.header('Location',`${req.originalUrl}/${data._id}`);
+      res.status(201).json({data});
     })
     .catch((error) => {
       console.log('User cant be created',error);
@@ -76,7 +76,6 @@ const updateUser = (req, res = response) => {
 
   const { userId } = req.params;
   const {_id, hasGoogle,status, image, password, ...rest } = req.body;
-  //TODO cambio de contraseña (cifrado)
 
   User.findByIdAndUpdate(userId,rest)
   .then( () => {
