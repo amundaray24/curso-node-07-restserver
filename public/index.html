@@ -30,7 +30,7 @@
 
   <script>
     function handleCredentialResponse(response) {
-        fetch('http://localhost:8080/auth/v1/auth/google/signin', {
+        fetch(`${window.location.origin}/auth/v1/auth/google/signin`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

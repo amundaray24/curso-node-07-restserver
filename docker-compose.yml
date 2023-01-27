@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   node-rest-server:
-    image: node-rest-server:1.3.0
+    image: node-rest-server:1..0
     build:
       context: ./
       dockerfile: Dockerfile
