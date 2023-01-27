@@ -4,25 +4,24 @@ const { Types } = require('mongoose');
 const Category = require('../models/category');
 
 const { generateResponseError } = require('../helpers/errors.generator.helper');
-const { paginationGenerator } = require('../helpers/pagination.generator.helper');
+const { requestPaginatorGenerator, responsePaginationGenerator } = require('../helpers/pagination.generator.helper');
 
 const listCategories = (req = request, res = response) => {
 
-  const {page = 0, pageSize = 10 } = req.query;
-  const pageNumber = Number(page);
-  const pageSizeNumber = Number(pageSize);
+  const {page, pageSize} = req.query;
+  const requestPagination = requestPaginatorGenerator(page,pageSize);
 
   Promise.all([
     Category.countDocuments({status : true}),
     Category.find({status : true})
       //.populate('user',['firstName','secondName','lastName','secondLastName'])
-      .skip(pageNumber === 0 ? 0 : (pageNumber-1)*pageSizeNumber)
-      .limit(pageSizeNumber)    
+      .skip(requestPagination.skip)
+      .limit(requestPagination.limit)
   ])
   .then((response) => {
     const data = response[1];
     if (data.length>0) {
-      const pagination = paginationGenerator(pageNumber,pageSizeNumber,data.length,response[0]);
+      const pagination = responsePaginationGenerator(requestPagination,data.length,response[0]);
       return res.json({
         data,
         pagination

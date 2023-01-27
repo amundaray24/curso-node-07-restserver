@@ -35,7 +35,15 @@ const productSchema = new Schema({
 
 productSchema.methods.toJSON = function() {
   const { _id ,__v, user, category, status, ...rest} = this.toObject();
-  return Object.assign({id: _id}, rest);
+  const response = {
+    id: _id,
+    ...rest,
+    category: {
+      id: category._id,
+      name: category.name
+    }
+  }
+  return response;
 }
 
 module.exports = model('coffee_products',productSchema,'coffee_products');

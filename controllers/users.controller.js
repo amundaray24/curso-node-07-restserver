@@ -3,25 +3,24 @@ const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
 const { generateResponseError } = require('../helpers/errors.generator.helper');
-const { paginationGenerator } = require('../helpers/pagination.generator.helper');
+const { requestPaginatorGenerator, responsePaginationGenerator } = require('../helpers/pagination.generator.helper');
 
 
 const listUsers = (req, res = response) => {
   
-  const {page = 0, pageSize = 10 } = req.query;
-  const pageNumber = Number(page);
-  const pageSizeNumber = Number(pageSize);
+  const {page, pageSize} = req.query;
+  const requestPagination = requestPaginatorGenerator(page,pageSize);
 
   Promise.all([
     User.countDocuments({status : true}),
     User.find({status : true})
-      .skip(pageNumber === 0 ? 0 : (pageNumber-1)*pageSizeNumber)
-      .limit(pageSizeNumber)    
+      .skip(requestPagination.skip)
+      .limit(requestPagination.limit)
   ])
   .then((response) => {
     const data = response[1];
     if (data.length>0) {
-      const pagination = paginationGenerator(pageNumber,pageSizeNumber,data.length,response[0]);
+      const pagination = responsePaginationGenerator(requestPagination,data.length,response[0]);
       return res.json({
         data,
         pagination

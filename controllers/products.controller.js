@@ -4,26 +4,33 @@ const { Types } = require('mongoose');
 const Product = require('../models/product');
 
 const { generateResponseError } = require('../helpers/errors.generator.helper');
-const { paginationGenerator } = require('../helpers/pagination.generator.helper');
+const { requestPaginatorGenerator, responsePaginationGenerator } = require('../helpers/pagination.generator.helper');
 
 
 const listProducts = (req= request, res = response) => {
   
-  const {page = 0, pageSize = 10 } = req.query;
-  const pageNumber = Number(page);
-  const pageSizeNumber = Number(pageSize);
+  const {page, pageSize} = req.query;
+  const requestPagination = requestPaginatorGenerator(page,pageSize);
+  
+  const category = req.query['category.id'];
+
+
+  let query = {
+    status: true,
+    ...(category && {category})
+  }
 
   Promise.all([
-    Product.countDocuments({status : true}),
-    Product.find({status : true})
-      //.populate('user',['firstName','secondName','lastName','secondLastName'])
-      .skip(pageNumber === 0 ? 0 : (pageNumber-1)*pageSizeNumber)
-      .limit(pageSizeNumber)    
+    Product.countDocuments(query),
+    Product.find(query)
+      .populate({ path: 'category', select: ['name']})
+      .skip(requestPagination.skip)
+      .limit(requestPagination.limit) 
   ])
   .then((response) => {
     const data = response[1];
     if (data.length>0) {
-      const pagination = paginationGenerator(pageNumber,pageSizeNumber,data.length,response[0]);
+      const pagination = responsePaginationGenerator(requestPagination,data.length,response[0]);
       return res.json({
         data,
         pagination
@@ -63,6 +70,7 @@ const getProduct = (req= request, res = response) => {
     _id: productId,
     status : true
   })
+  .populate({ path: 'category', select: ['name'] })
   .then((data) => {
     res.json({data});
   })

@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const {check} = require('express-validator');
+const {check, query} = require('express-validator');
 
 const { validateJwt, roleValidator, validateFields } = require('../middleware');
 
@@ -19,7 +19,10 @@ const {
 const router = Router();
 
 router.get('/', [
-  validateJwt
+  validateJwt,
+  query('page','page - Invalid Pagination Parameter').optional().isInt({gt : 0}),
+  query('pageSize','pageSize - Invalid Pagination Parameter').optional().isInt({gt : 0}),
+  validateFields
 ],
 listCategories);
 
