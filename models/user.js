@@ -25,7 +25,8 @@ const userSchema = new Schema({
     required: [true, 'The password must be informed']
   },
   image : {
-    type: String
+    type: Schema.Types.ObjectId,
+    ref: 'coffee_images',
   },
   role : {
     type: String,

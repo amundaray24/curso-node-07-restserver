@@ -1,5 +1,6 @@
 const express = require('express');
-var cors = require('cors');
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
 
 const { createConnection } = require('../database/coffee.config.db');
 
@@ -19,6 +20,10 @@ class Server {
       {
         path: '/users/v1/users',
         route: '../routes/users.route'
+      },
+      {
+        path: '/images/v1/images',
+        route: '../routes/images.route'
       },
       {
         path: '/categories/v1/categories',
@@ -51,6 +56,12 @@ class Server {
     this.app.use(express.json());
     //Public directory
     this.app.use(express.static('public'));
+    //File uploader
+    this.app.use(fileUpload({
+      useTempFiles : true,
+      tempFileDir : process.env.IMAGES_TMP_PATH || '/tmp/',
+      createParentPath: true
+    }));
   }
 
   routes() {

@@ -15,7 +15,19 @@ const {
   deleteUser
 } = require('../controllers/users.controller');
 
-const { validateJwt, roleValidator, validateFields } = require('../middleware');
+const { 
+  createImage,
+  deleteImage
+} = require('../controllers/users.images.controller');
+
+const { 
+  validateJwt, 
+  roleValidator, 
+  validateFields, 
+  validateUserImage,
+  validateUserNotImage
+} = require('../middleware');
+
 
 const router = Router();
 
@@ -75,5 +87,26 @@ router.delete('/:userId',[
   validateFields
 ],
 deleteUser);
+
+router.post('/:userId/images',[
+  validateJwt,
+  roleValidator('ADMIN_ROLE','USER_ROLE'),
+  check('userId','userId - Invalid Mandatory Parameter').isMongoId(),
+  check('userId').custom(validateUserById),
+  check('imageId','imageId - Invalid Mandatory Parameter, must be sended').notEmpty(),
+  validateFields,
+  validateUserNotImage
+],
+createImage);
+
+router.delete('/:userId/images',[
+  validateJwt,
+  roleValidator('ADMIN_ROLE','USER_ROLE'),
+  check('userId','userId - Invalid Mandatory Parameter').isMongoId(),
+  check('userId').custom(validateUserById),
+  validateFields,
+  validateUserImage
+],
+deleteImage);
 
 module.exports = router;
