@@ -11,8 +11,6 @@ const cacheClient = redis.createClient({
   password: IMAGES_TMP_CACHE_PASSWORD
 });
 
-console.log(`CONNECTION - HOST: ${IMAGES_TMP_CACHE_HOST}, PORT: ${IMAGES_TMP_CACHE_PORT}`);
-
 cacheClient.connect();
 
 cacheClient.on('error', (err) =>  {
