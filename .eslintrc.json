@@ -5,7 +5,15 @@
     "amd": true,
     "node": true
   },
-  "ignorePatterns": ["node_modules", "database/scripts"],
+  "rules": {
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true }]
+  },
+  "ignorePatterns": [
+    "node_modules", 
+    "database/scripts",
+    "Dockerfile",
+    "docker-compose.yml"
+  ],
   "extends": "eslint:recommended",
   "parserOptions": {
       "ecmaVersion": "latest",

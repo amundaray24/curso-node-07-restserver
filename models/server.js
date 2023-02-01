@@ -3,6 +3,7 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 
 const { createConnection } = require('../database/coffee.config.db');
+const { deleteUnusedFiles } = require('../helpers/file.generator.helper');
 
 class Server {
   
@@ -43,6 +44,9 @@ class Server {
     this.middleware();
     //Routes
     this.routes();
+
+    //Init Image Batch
+    deleteUnusedFiles('temporal');
   }
 
   databaseConnect () {
