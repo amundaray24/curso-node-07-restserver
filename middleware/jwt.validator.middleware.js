@@ -13,7 +13,8 @@ const validateJwt = (req = request, res=response, next) => {
     const {uid} = jwt.verify(token,process.env.JWT_SECRET);
     User.findById({_id:uid}).and({status:true}).then((data) => {
       if (data) {
-        req.context = {user:data}
+        const {password,__v, ...rest } = data._doc;
+        req.context = {user:rest};
         next();
       } else {
         generateResponseError(res,401,'Invalid Authorization Token');

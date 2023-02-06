@@ -6,7 +6,6 @@ const User = require('../models/user');
 const { generateJwt } = require('../helpers/jwt.generator.helper');
 const { generateResponseError } = require('../helpers/errors.generator.helper');
 const { googleVerify } = require('../helpers/google.jwt.validator.helper');
-const user = require('../models/user');
 
 const doLogin = async (req = request ,res = response) => {
   const {email, password} = req.body;

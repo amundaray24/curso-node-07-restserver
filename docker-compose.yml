@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   node-rest-server:
-    image: node-rest-server:1..0
+    image: node-rest-server:1.5.0
     build:
       context: ./
       dockerfile: Dockerfile
@@ -20,6 +20,7 @@ services:
       - "${PORT}:${PORT}"
     depends_on:
       - "mongodb"
+      - "redis"
   mongodb:
     image: mongo:6.0.3
     container_name: mongodb
@@ -29,8 +30,22 @@ services:
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    env_file: .env
     volumes:
       - mongodb:/data/db
       - ./database/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+  redis:
+    image: redis:7.0.8
+    container_name: redis
+    restart: always
+    env_file: .env
+    ports:
+      - '6379:6379'
+    command: redis-server --save 60 1 --loglevel warning --requirepass ${IMAGES_TMP_CACHE_PASSWORD}
+    volumes: 
+      - cache:/data
+    expose:
+      - 6379
 volumes:
   mongodb: {}
+  cache: {}
