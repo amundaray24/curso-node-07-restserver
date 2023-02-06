@@ -1,5 +1,7 @@
 #init DB script
 database/scripts
+#temporal local directory for image storage
+uploads
 
 # Logs
 logs

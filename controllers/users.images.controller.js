@@ -20,7 +20,7 @@ const createImage = async (req= request, res = response) => {
     res.sendStatus(204);
   } catch (err) {
     console.log(err)
-    return generateResponseError(res,400,err.message);
+    return generateResponseError(res,400,err);
   }
 }
 
@@ -36,7 +36,7 @@ const deleteImage = async (req= request, res = response) => {
     res.sendStatus(204);
   } catch (err) {
     console.log(err)
-    return generateResponseError(res,400,err.message);
+    return generateResponseError(res,400,err);
   }
 }
 
